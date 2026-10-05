@@ -8,57 +8,62 @@
 </head>
 <body>
 
+<div class="sky">
+  <div class="cloud c1">☁️</div>
+  <div class="cloud c2">☁️</div>
+  <div class="cloud c3">☁️</div>
+</div>
+
 <div id="home" class="screen active">
-  <h1 class="title">🌈 Belajar Yuk! 🌈</h1>
+  <div class="mascot" id="mascot">🐣</div>
+  <h1 class="title">Belajar Yuk!</h1>
   <div class="menu-grid">
-    <button class="menu-btn abc" data-target="abc">
-      <span class="emoji">🔤</span>
-      <span>Huruf ABC</span>
+    <button class="menu-btn" style="--c:#ff6b6b" data-target="balon">
+      <span class="emoji">🎈</span><span>Balon Huruf</span>
     </button>
-    <button class="menu-btn hijaiyah" data-target="hijaiyah">
-      <span class="emoji">🕋</span>
-      <span>Alif Ba Ta</span>
+    <button class="menu-btn" style="--c:#ffb627" data-target="hewan">
+      <span class="emoji">🐮</span><span>Suara Hewan</span>
     </button>
-    <button class="menu-btn hewan" data-target="hewan">
-      <span class="emoji">🐶</span>
-      <span>Hewan</span>
+    <button class="menu-btn" style="--c:#1dd1a1" data-target="cari">
+      <span class="emoji">🔍</span><span>Cari yang Mana?</span>
     </button>
-    <button class="menu-btn angka" data-target="angka">
-      <span class="emoji">🔢</span>
-      <span>Angka & Planet</span>
+    <button class="menu-btn" style="--c:#6c5ce7" data-target="planet">
+      <span class="emoji">🪐</span><span>Tata Surya</span>
     </button>
   </div>
 </div>
 
-<div id="abc" class="screen">
-  <button class="back-btn">⬅ Kembali</button>
-  <h2 class="screen-title">Huruf ABC</h2>
-  <div class="grid letters" id="abc-grid"></div>
+<div id="balon" class="screen game">
+  <div class="topbar">
+    <button class="back-btn">⬅</button>
+    <div class="toggle">
+      <button class="mode-btn active" data-mode="abc">ABC</button>
+      <button class="mode-btn" data-mode="hijaiyah">ا ب ت</button>
+    </div>
+  </div>
+  <div class="balloon-field" id="balloon-field"></div>
 </div>
 
-<div id="hijaiyah" class="screen">
-  <button class="back-btn">⬅ Kembali</button>
-  <h2 class="screen-title">Alif Ba Ta</h2>
-  <div class="grid letters" id="hijaiyah-grid"></div>
+<div id="hewan" class="screen game">
+  <div class="topbar"><button class="back-btn">⬅</button><span class="hint">Tap hewannya!</span></div>
+  <div class="farm" id="farm"></div>
 </div>
 
-<div id="hewan" class="screen">
-  <button class="back-btn">⬅ Kembali</button>
-  <h2 class="screen-title">Hewan</h2>
-  <div class="grid cards" id="hewan-grid"></div>
+<div id="cari" class="screen game">
+  <div class="topbar">
+    <button class="back-btn">⬅</button>
+    <div class="stars" id="stars">⭐ 0</div>
+  </div>
+  <button class="question" id="question">🔊 Mana kucing?</button>
+  <div class="choices" id="choices"></div>
 </div>
 
-<div id="angka" class="screen">
-  <button class="back-btn">⬅ Kembali</button>
-  <h2 class="screen-title">Angka & Planet</h2>
-  <div class="grid cards" id="angka-grid"></div>
-  <h3 class="sub-title">Planet 🪐</h3>
-  <div class="grid cards" id="planet-grid"></div>
-</div>
-
-<div id="big-stage" class="stage">
-  <div id="big-emoji"></div>
-  <div id="big-label"></div>
+<div id="planet" class="screen game space">
+  <div class="topbar"><button class="back-btn">⬅</button><span class="hint light">Tap planetnya!</span></div>
+  <div class="solar" id="solar">
+    <button class="sun" id="sun">☀️</button>
+  </div>
+  <div class="planet-label" id="planet-label"></div>
 </div>
 
 <script src="data.js"></script>
