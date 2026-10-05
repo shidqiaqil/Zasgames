@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Belajar Yuk! - Game Edukasi Anak</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="home" class="screen active">
+  <h1 class="title">🌈 Belajar Yuk! 🌈</h1>
+  <div class="menu-grid">
+    <button class="menu-btn abc" data-target="abc">
+      <span class="emoji">🔤</span>
+      <span>Huruf ABC</span>
+    </button>
+    <button class="menu-btn hijaiyah" data-target="hijaiyah">
+      <span class="emoji">🕋</span>
+      <span>Alif Ba Ta</span>
+    </button>
+    <button class="menu-btn hewan" data-target="hewan">
+      <span class="emoji">🐶</span>
+      <span>Hewan</span>
+    </button>
+    <button class="menu-btn angka" data-target="angka">
+      <span class="emoji">🔢</span>
+      <span>Angka & Planet</span>
+    </button>
+  </div>
+</div>
+
+<div id="abc" class="screen">
+  <button class="back-btn">⬅ Kembali</button>
+  <h2 class="screen-title">Huruf ABC</h2>
+  <div class="grid letters" id="abc-grid"></div>
+</div>
+
+<div id="hijaiyah" class="screen">
+  <button class="back-btn">⬅ Kembali</button>
+  <h2 class="screen-title">Alif Ba Ta</h2>
+  <div class="grid letters" id="hijaiyah-grid"></div>
+</div>
+
+<div id="hewan" class="screen">
+  <button class="back-btn">⬅ Kembali</button>
+  <h2 class="screen-title">Hewan</h2>
+  <div class="grid cards" id="hewan-grid"></div>
+</div>
+
+<div id="angka" class="screen">
+  <button class="back-btn">⬅ Kembali</button>
+  <h2 class="screen-title">Angka & Planet</h2>
+  <div class="grid cards" id="angka-grid"></div>
+  <h3 class="sub-title">Planet 🪐</h3>
+  <div class="grid cards" id="planet-grid"></div>
+</div>
+
+<div id="big-stage" class="stage">
+  <div id="big-emoji"></div>
+  <div id="big-label"></div>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
