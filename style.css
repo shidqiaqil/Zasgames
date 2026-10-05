@@ -61,6 +61,24 @@ button { font-family: inherit; border: none; cursor: pointer; }
 .mode-btn { background: transparent; border-radius: 26px; padding: 10px 18px; font-size: 1.3rem; font-weight: bold; color: #888; }
 .mode-btn.active { background: #ff6b6b; color: #fff; }
 .balloon-field { position: absolute; inset: 0; }
+.mode-btn { padding: 10px 14px; }
+
+/* Tulis huruf */
+.trace { display: none; position: absolute; inset: 84px 12px 12px; flex-direction: column; gap: 12px; z-index: 4; }
+.trace.active { display: flex; }
+#trace-canvas {
+  flex: 1; width: 100%; min-height: 0; touch-action: none;
+  background: rgba(255,255,255,0.55); border-radius: 32px;
+  box-shadow: 0 8px 0 rgba(0,0,0,0.08);
+}
+.progress { height: 18px; background: #fff; border-radius: 9px; overflow: hidden; }
+.progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, #ff6b6b, #ffd93d, #1dd1a1, #54a0ff, #6c5ce7); transition: width 0.15s; }
+.trace-nav { display: flex; justify-content: center; gap: 18px; }
+.nav-btn {
+  width: 72px; height: 72px; border-radius: 50%; background: #fff; font-size: 2rem; color: #ff6b6b;
+  box-shadow: 0 5px 0 rgba(0,0,0,0.15);
+}
+.nav-btn:active { transform: translateY(5px); box-shadow: none; }
 .balloon {
   position: absolute; bottom: -200px;
   width: 110px; height: 135px;

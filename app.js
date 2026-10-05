@@ -138,15 +138,181 @@ games.balon = (() => {
       document.querySelectorAll('.mode-btn').forEach(m => m.classList.remove('active'));
       btn.classList.add('active');
       mode = btn.dataset.mode;
-      field.innerHTML = '';
       sfx.tap();
-      spawn();
+      stopBalloons();
+      trace.stop();
+      if (mode === 'tulis') trace.start();
+      else startBalloons();
     });
   });
 
+  function startBalloons() { spawn(); timer = setInterval(spawn, 1300); }
+  function stopBalloons() { clearInterval(timer); field.innerHTML = ''; }
+
   return {
-    start() { spawn(); timer = setInterval(spawn, 1300); },
-    stop() { clearInterval(timer); field.innerHTML = ''; }
+    start() { if (mode === 'tulis') trace.start(); else startBalloons(); },
+    stop() { stopBalloons(); trace.stop(); }
+  };
+})();
+
+// ---------- Mode: Tulis Huruf ----------
+const trace = (() => {
+  const panel = $('trace');
+  const canvas = $('trace-canvas');
+  const g = canvas.getContext('2d');
+  const bar = $('trace-progress');
+  const FONT = '"Arial Rounded MT Bold", "Arial Black", Arial, sans-serif';
+  let index = 0, targets = [], covered = 0, strokes = [], drawing = null, done = false, hue = 0;
+  let w = 0, h = 0, nextTimer;
+
+  function letter() { return ABC_LIST[index]; }
+
+  function layout() {
+    const dpr = window.devicePixelRatio || 1;
+    const r = canvas.getBoundingClientRect();
+    w = r.width; h = r.height;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function fontSize() { return Math.min(w, h * 1.15) * 0.82; }
+
+  function setFont(ctx2) {
+    ctx2.font = `900 ${fontSize()}px ${FONT}`;
+    ctx2.textAlign = 'center';
+    ctx2.textBaseline = 'middle';
+  }
+
+  function buildTargets() {
+    const off = document.createElement('canvas');
+    off.width = w; off.height = h;
+    const o = off.getContext('2d');
+    setFont(o);
+    o.fillText(letter().label, w / 2, h / 2 + fontSize() * 0.04);
+    const data = o.getImageData(0, 0, w, h).data;
+    const step = Math.max(10, Math.round(fontSize() / 22));
+    targets = [];
+    for (let y = 0; y < h; y += step)
+      for (let x = 0; x < w; x += step)
+        if (data[(y * w + x) * 4 + 3] > 128) targets.push({ x, y, hit: false });
+    covered = 0;
+  }
+
+  function draw() {
+    g.clearRect(0, 0, w, h);
+    setFont(g);
+    const ty = h / 2 + fontSize() * 0.04;
+    g.fillStyle = done ? '#ffd93d' : 'rgba(255,255,255,0.95)';
+    g.fillText(letter().label, w / 2, ty);
+    g.lineWidth = 4;
+    g.setLineDash([14, 12]);
+    g.strokeStyle = done ? '#ff9f43' : '#b9c4d6';
+    g.strokeText(letter().label, w / 2, ty);
+    g.setLineDash([]);
+
+    g.lineCap = 'round';
+    g.lineJoin = 'round';
+    g.lineWidth = Math.max(18, fontSize() / 9);
+    strokes.forEach(s => {
+      for (let i = 1; i < s.length; i++) {
+        g.strokeStyle = `hsl(${s[i].hue}, 90%, 60%)`;
+        g.beginPath();
+        g.moveTo(s[i - 1].x, s[i - 1].y);
+        g.lineTo(s[i].x, s[i].y);
+        g.stroke();
+      }
+      if (s.length === 1) {
+        g.fillStyle = `hsl(${s[0].hue}, 90%, 60%)`;
+        g.beginPath();
+        g.arc(s[0].x, s[0].y, g.lineWidth / 2, 0, Math.PI * 2);
+        g.fill();
+      }
+    });
+  }
+
+  function mark(x, y) {
+    const rad = Math.max(22, fontSize() / 9);
+    const r2 = rad * rad;
+    targets.forEach(t => {
+      if (!t.hit && (t.x - x) ** 2 + (t.y - y) ** 2 < r2) { t.hit = true; covered++; }
+    });
+    const pct = targets.length ? covered / targets.length : 0;
+    bar.style.width = Math.min(100, (pct / 0.8) * 100) + '%';
+    if (pct >= 0.8 && !done) finish();
+  }
+
+  function finish() {
+    done = true;
+    drawing = null;
+    draw();
+    sfx.win();
+    const r = canvas.getBoundingClientRect();
+    confetti(r.left + w / 2, r.top + h / 2, 40);
+    speak(`${pick(['Hebat!', 'Pintar!', 'Yeay!'])} Huruf ${letter().speak}!`);
+    nextTimer = setTimeout(() => go(1), 2800);
+  }
+
+  function point(e) {
+    const r = canvas.getBoundingClientRect();
+    hue = (hue + 4) % 360;
+    return { x: e.clientX - r.left, y: e.clientY - r.top, hue };
+  }
+
+  canvas.addEventListener('pointerdown', e => {
+    if (done) return;
+    e.preventDefault();
+    canvas.setPointerCapture(e.pointerId);
+    const p = point(e);
+    drawing = [p];
+    strokes.push(drawing);
+    mark(p.x, p.y);
+    draw();
+  });
+  canvas.addEventListener('pointermove', e => {
+    if (!drawing || done) return;
+    const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+    evs.forEach(ev => {
+      const p = point(ev);
+      drawing.push(p);
+      mark(p.x, p.y);
+    });
+    draw();
+  });
+  ['pointerup', 'pointercancel'].forEach(t => canvas.addEventListener(t, () => { drawing = null; }));
+
+  function reset(announce) {
+    clearTimeout(nextTimer);
+    strokes = []; drawing = null; done = false;
+    bar.style.width = '0%';
+    buildTargets();
+    draw();
+    if (announce) speak(`Ayo tulis huruf ${letter().speak}`);
+  }
+
+  function go(delta) {
+    index = (index + delta + ABC_LIST.length) % ABC_LIST.length;
+    reset(true);
+  }
+
+  $('trace-prev').addEventListener('click', () => { sfx.tap(); go(-1); });
+  $('trace-next').addEventListener('click', () => { sfx.tap(); go(1); });
+  $('trace-clear').addEventListener('click', () => { sfx.boing(); reset(false); });
+  window.addEventListener('resize', () => {
+    if (!panel.classList.contains('active')) return;
+    layout();
+    reset(false);
+  });
+
+  return {
+    start() {
+      panel.classList.add('active');
+      layout();
+      reset(true);
+    },
+    stop() {
+      clearTimeout(nextTimer);
+      panel.classList.remove('active');
+    }
   };
 })();
 
